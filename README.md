@@ -6,10 +6,10 @@
 ## Screenshots
 
 ### Mobile Responsive View
-![Mobile View](https://green-belt-lyart.vercel.app/og-image.png)
+![Mobile View](https://raw.githubusercontent.com/Abhi0833-eng/green-belt/main/frontend/public/screenshots/mobile.png.png)
 
-### CI/CD Pipeline
-![CI/CD](https://github.com/Abhi0833-eng/green-belt/actions/workflows/ci.yml/badge.svg)
+### CI/CD Pipeline ✅
+![CI/CD](https://raw.githubusercontent.com/Abhi0833-eng/green-belt/main/frontend/public/screenshots/cicd.png.png)
 
 ## Contract Addresses (Stellar Testnet)
 - **Poll Contract**: `CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ`
