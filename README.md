@@ -1,22 +1,20 @@
-# Soroban Project
+# 🟢 Green Belt - Advanced Poll dApp
 
-## Project Structure
+## Live Demo
+🔗 https://green-belt-lyart.vercel.app
 
-This repository uses the recommended structure for a Soroban project:
+## Contract Addresses (Stellar Testnet)
+- **Poll Contract**: `CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ`
+- **Reward Token**: `CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO`
 
-```text
-.
-├── contracts
-│   └── hello_world
-│       ├── src
-│       │   ├── lib.rs
-│       │   └── test.rs
-│       └── Cargo.toml
-├── Cargo.toml
-└── README.md
-```
+## Features
+- ✅ Inter-contract calls (Poll → Token reward)
+- ✅ Custom REWARD token
+- ✅ CI/CD via GitHub Actions
+- ✅ Mobile responsive UI
+- ✅ Deployed on Vercel
 
-- New Soroban contracts can be put in `contracts`, each in their own directory. There is already a `hello_world` contract in there to get you started.
-- If you initialized this project with any other example contracts via `--with-example`, those contracts will be in the `contracts` directory as well.
-- Contracts should have their own `Cargo.toml` files that rely on the top-level `Cargo.toml` workspace for their dependencies.
-- Frontend libraries can be added to the top-level directory as well. If you initialized this project with a frontend template via `--frontend-template` you will have those files already included.
+## Tech Stack
+- Soroban Smart Contracts (Rust)
+- Next.js + Tailwind CSS
+- Stellar Testnet
