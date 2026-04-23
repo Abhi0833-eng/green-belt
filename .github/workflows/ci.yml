@@ -17,16 +17,23 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
           
       - name: Install dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
           
       - name: Build
         run: |
           cd frontend
           npm run build
           
+      - name: Lint
+        run: |
+          cd frontend
+          npm run lint
+          
       - name: Check build success
-        run: echo "✅ Build successful!"
+        run: echo "✅ Build and lint successful!"
