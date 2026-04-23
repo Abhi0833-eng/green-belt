@@ -3,7 +3,6 @@ import { useState } from "react";
 
 const POLL_CONTRACT = "CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ";
 const REWARD_CONTRACT = "CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO";
-const NETWORK = "testnet";
 
 const options = ["Option A", "Option B", "Option C"];
 
@@ -23,7 +22,7 @@ export default function Home() {
       setTxHash(fakeTx);
       setVotes((prev) => ({ ...prev, [selected]: prev[selected as keyof typeof prev] + 1 }));
       setVoted(true);
-    } catch (e) {
+    } catch (_e) {
       alert("Error! Try again.");
     }
     setLoading(false);
