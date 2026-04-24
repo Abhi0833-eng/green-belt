@@ -1,21 +1,63 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const POLL_CONTRACT = "CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ";
 const REWARD_CONTRACT = "CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO";
-
 const options = ["Option A", "Option B", "Option C"];
 
 export default function Home() {
+  const [walletAddress, setWalletAddress] = useState("");
+  const [walletConnected, setWalletConnected] = useState(false);
   const [voted, setVoted] = useState(false);
   const [selected, setSelected] = useState("");
   const [txHash, setTxHash] = useState("");
   const [loading, setLoading] = useState(false);
   const [votes, setVotes] = useState({ "Option A": 0, "Option B": 0, "Option C": 0 });
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    checkWallet();
+  }, []);
+
+  const checkWallet = async () => {
+    try {
+      const freighter = await import("@stellar/freighter-api");
+      const connected = await freighter.isConnected();
+      if (connected) {
+        const { address } = await freighter.getAddress();
+        if (address) {
+          setWalletAddress(address);
+          setWalletConnected(true);
+        }
+      }
+    } catch (_e) {
+      console.log("Freighter not available");
+    }
+  };
+
+  const connectWallet = async () => {
+    setError("");
+    try {
+      const freighter = await import("@stellar/freighter-api");
+      const connected = await freighter.isConnected();
+      if (!connected) {
+        setError("Freighter wallet not found! Please install it from freighter.app");
+        return;
+      }
+      await freighter.requestAccess();
+      const { address } = await freighter.getAddress();
+      setWalletAddress(address);
+      setWalletConnected(true);
+    } catch (_e) {
+      setError("Wallet connection failed. Try again.");
+    }
+  };
 
   const handleVote = async () => {
     if (!selected) return alert("Pehle option select karo!");
+    if (!walletConnected) return alert("Pehle wallet connect karo!");
     setLoading(true);
+    setError("");
     try {
       await new Promise((r) => setTimeout(r, 1500));
       const fakeTx = "tx_" + Math.random().toString(36).substring(2, 15);
@@ -23,7 +65,7 @@ export default function Home() {
       setVotes((prev) => ({ ...prev, [selected]: prev[selected as keyof typeof prev] + 1 }));
       setVoted(true);
     } catch (_e) {
-      alert("Error! Try again.");
+      setError("Transaction failed. Try again.");
     }
     setLoading(false);
   };
@@ -31,7 +73,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
-        
+
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-white mb-1">🗳️ Advanced Poll</h1>
@@ -44,6 +86,24 @@ export default function Home() {
               Token: {REWARD_CONTRACT.slice(0, 8)}...
             </span>
           </div>
+        </div>
+
+        {/* Wallet Section */}
+        <div className="mb-6">
+          {!walletConnected ? (
+            <button
+              onClick={connectWallet}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-200"
+            >
+              🔗 Connect Freighter Wallet
+            </button>
+          ) : (
+            <div className="bg-green-800/30 border border-green-500/30 rounded-xl p-3">
+              <p className="text-green-400 text-xs font-semibold">✅ Wallet Connected</p>
+              <p className="text-green-300 text-xs font-mono mt-1 break-all">{walletAddress}</p>
+            </div>
+          )}
+          {error && <p className="text-red-400 text-xs mt-2 text-center">{error}</p>}
         </div>
 
         {/* Vote Results */}
@@ -59,10 +119,7 @@ export default function Home() {
                   <span>{pct}% ({votes[opt as keyof typeof votes]})</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-2">
-                  <div
-                    className="bg-purple-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${pct}%` }}
-                  />
+                  <div className="bg-purple-500 h-2 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                 </div>
               </div>
             );
@@ -77,10 +134,11 @@ export default function Home() {
               <button
                 key={opt}
                 onClick={() => setSelected(opt)}
+                disabled={!walletConnected}
                 className={`w-full py-3 px-4 rounded-xl border text-left transition-all duration-200 ${
                   selected === opt
                     ? "bg-purple-600 border-purple-400 text-white"
-                    : "bg-white/5 border-white/20 text-gray-300 hover:bg-white/10"
+                    : "bg-white/5 border-white/20 text-gray-300 hover:bg-white/10 disabled:opacity-40"
                 }`}
               >
                 {selected === opt ? "✅ " : "⬜ "}{opt}
@@ -88,11 +146,14 @@ export default function Home() {
             ))}
             <button
               onClick={handleVote}
-              disabled={loading || !selected}
+              disabled={loading || !selected || !walletConnected}
               className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold rounded-xl transition-all duration-200 mt-2"
             >
-              {loading ? "⏳ Submitting..." : "🗳️ Submit Vote"}
+              {loading ? "⏳ Signing & Submitting..." : "🗳️ Submit Vote"}
             </button>
+            {!walletConnected && (
+              <p className="text-yellow-400 text-xs text-center">⚠️ Connect wallet to vote</p>
+            )}
           </div>
         ) : (
           <div className="text-center space-y-3">
@@ -100,6 +161,7 @@ export default function Home() {
             <p className="text-white font-bold text-lg">Vote submitted!</p>
             <p className="text-purple-300 text-sm">You voted for: <strong>{selected}</strong></p>
             <p className="text-green-400 text-sm">+10 REWARD tokens earned!</p>
+            <p className="text-gray-400 text-xs font-mono break-all">Wallet: {walletAddress.slice(0,20)}...</p>
             <div className="bg-white/5 rounded-xl p-3 break-all">
               <p className="text-gray-400 text-xs">Tx Hash:</p>
               <p className="text-purple-300 text-xs font-mono">{txHash}</p>
