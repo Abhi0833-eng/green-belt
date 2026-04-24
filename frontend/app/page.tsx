@@ -1,9 +1,17 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 const POLL_CONTRACT = "CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ";
 const REWARD_CONTRACT = "CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO";
 const options = ["Option A", "Option B", "Option C"];
+
+async function getFreighterAddress(): Promise<string> {
+  const freighter = await import("@stellar/freighter-api");
+  const connected = await freighter.isConnected();
+  if (!connected) return "";
+  const { address } = await freighter.getAddress();
+  return address || "";
+}
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState("");
@@ -15,25 +23,14 @@ export default function Home() {
   const [votes, setVotes] = useState({ "Option A": 0, "Option B": 0, "Option C": 0 });
   const [error, setError] = useState("");
 
-  const checkWallet = useCallback(async () => {
-    try {
-      const freighter = await import("@stellar/freighter-api");
-      const connected = await freighter.isConnected();
-      if (connected) {
-        const { address } = await freighter.getAddress();
-        if (address) {
-          setWalletAddress(address);
-          setWalletConnected(true);
-        }
-      }
-    } catch {
-      console.log("Freighter not available");
-    }
-  }, []);
-
   useEffect(() => {
-    checkWallet();
-  }, [checkWallet]);
+    getFreighterAddress().then((addr) => {
+      if (addr) {
+        setWalletAddress(addr);
+        setWalletConnected(true);
+      }
+    });
+  }, []);
 
   const connectWallet = async () => {
     setError("");
@@ -74,7 +71,6 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-2xl border border-white/20">
 
-        {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-white mb-1">🗳️ Advanced Poll</h1>
           <p className="text-purple-300 text-sm">Powered by Soroban Smart Contracts</p>
@@ -88,7 +84,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Wallet Section */}
         <div className="mb-6">
           {!walletConnected ? (
             <button
@@ -106,7 +101,6 @@ export default function Home() {
           {error && <p className="text-red-400 text-xs mt-2 text-center">{error}</p>}
         </div>
 
-        {/* Vote Results */}
         <div className="mb-6 space-y-3">
           <h2 className="text-white font-semibold text-sm uppercase tracking-wide">Live Results</h2>
           {options.map((opt) => {
@@ -126,7 +120,6 @@ export default function Home() {
           })}
         </div>
 
-        {/* Voting Section */}
         {!voted ? (
           <div className="space-y-3">
             <h2 className="text-white font-semibold text-sm uppercase tracking-wide">Cast Your Vote</h2>
@@ -169,7 +162,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Network Badge */}
         <div className="mt-6 text-center">
           <span className="bg-green-800/50 text-green-300 text-xs px-3 py-1 rounded-full">
             🟢 Stellar Testnet
