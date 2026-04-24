@@ -12,10 +12,16 @@
 ![CI/CD](https://raw.githubusercontent.com/Abhi0833-eng/green-belt/main/frontend/public/screenshots/cicd.png.png)
 
 ## Contract Addresses (Stellar Testnet)
-- **Poll Contract**: `CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ`
-  - Tx Hash: `2e479877160ab95c475649a68eccb62285073c0e531610f9fbdf860b659d4d93`
-- **Reward Token**: `CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO`
-  - Tx Hash: `358b59e33dbaee8c2574ba046c7b35c3087a3c75cc579d09ec099c6df90f355a`
+
+### Poll Contract
+- **Address**: `CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ`
+- **Stellar Explorer**: https://stellar.expert/explorer/testnet/contract/CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ
+- **Deploy Tx**: https://stellar.expert/explorer/testnet/tx/2e479877160ab95c475649a68eccb62285073c0e531610f9fbdf860b659d4d93
+
+### Reward Token Contract
+- **Address**: `CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO`
+- **Stellar Explorer**: https://stellar.expert/explorer/testnet/contract/CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO
+- **Deploy Tx**: https://stellar.expert/explorer/testnet/tx/358b59e33dbaee8c2574ba046c7b35c3087a3c75cc579d09ec099c6df90f355a
 
 ## Features
 - ✅ Inter-contract calls (Poll → Token reward)
