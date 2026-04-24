@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const POLL_CONTRACT = "CDE7XDJ7E6CDSZGT37K7FHE3EA4MRKMQJNMM34UYGNNAZHAXUDQC7KTQ";
 const REWARD_CONTRACT = "CAXZHPXTDHYDIGKOMNDP4FCJQF7HWSOEIC7SRWCSOIAP3EGVSMBXBQVO";
@@ -15,11 +15,7 @@ export default function Home() {
   const [votes, setVotes] = useState({ "Option A": 0, "Option B": 0, "Option C": 0 });
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    checkWallet();
-  }, []);
-
-  const checkWallet = async () => {
+  const checkWallet = useCallback(async () => {
     try {
       const freighter = await import("@stellar/freighter-api");
       const connected = await freighter.isConnected();
@@ -30,10 +26,14 @@ export default function Home() {
           setWalletConnected(true);
         }
       }
-    } catch (_e) {
+    } catch {
       console.log("Freighter not available");
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    checkWallet();
+  }, [checkWallet]);
 
   const connectWallet = async () => {
     setError("");
@@ -48,7 +48,7 @@ export default function Home() {
       const { address } = await freighter.getAddress();
       setWalletAddress(address);
       setWalletConnected(true);
-    } catch (_e) {
+    } catch {
       setError("Wallet connection failed. Try again.");
     }
   };
@@ -64,7 +64,7 @@ export default function Home() {
       setTxHash(fakeTx);
       setVotes((prev) => ({ ...prev, [selected]: prev[selected as keyof typeof prev] + 1 }));
       setVoted(true);
-    } catch (_e) {
+    } catch {
       setError("Transaction failed. Try again.");
     }
     setLoading(false);
@@ -161,7 +161,7 @@ export default function Home() {
             <p className="text-white font-bold text-lg">Vote submitted!</p>
             <p className="text-purple-300 text-sm">You voted for: <strong>{selected}</strong></p>
             <p className="text-green-400 text-sm">+10 REWARD tokens earned!</p>
-            <p className="text-gray-400 text-xs font-mono break-all">Wallet: {walletAddress.slice(0,20)}...</p>
+            <p className="text-gray-400 text-xs font-mono break-all">Wallet: {walletAddress.slice(0, 20)}...</p>
             <div className="bg-white/5 rounded-xl p-3 break-all">
               <p className="text-gray-400 text-xs">Tx Hash:</p>
               <p className="text-purple-300 text-xs font-mono">{txHash}</p>
